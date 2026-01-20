@@ -7,7 +7,8 @@
 import SwiftUI
 
 struct  SignUpScreen: View {
-    @Binding var path: NavigationPath 
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @Binding var path: NavigationPath
     @State private var name: String? = nil
     @State private var email: String? = nil
     @State private var password: String? = nil
@@ -18,7 +19,6 @@ struct  SignUpScreen: View {
     @State private var passwordError: String? = nil
     @State private var confirmPasswordError: String? = nil
     
-    @State private var navigate = false
     
     var body: some View{
         
@@ -86,7 +86,7 @@ struct  SignUpScreen: View {
                     }
                 )
                 
-                PrimaryButton(title: Strings.Login.title) {
+                PrimaryButton(title: Strings.SignUp.title) {
                     let usernameValid = {
                         if let name = name {
                             return !name.isEmpty && name.count >= 3
@@ -115,10 +115,17 @@ struct  SignUpScreen: View {
                     }()
                     
                     if usernameValid && emailValid && passwordValid && confirmValid {
-                        path.append(AppRoute.home)
-                    } else {
-                        print(Strings.Validation.validationFailed)
-                    }
+
+                            let user = User(
+                                name: name!,
+                                email: email!,
+                                password: password!
+                            )
+
+                            UserStorage.save(user: user)
+
+                        isLoggedIn = true   
+                        }
                 }
                 HStack {
                     Text(Strings.SignUp.text)
@@ -133,10 +140,7 @@ struct  SignUpScreen: View {
                 }
             }
         .padding()
-        .navigationBarBackButtonHidden(true) 
-        .navigationDestination(isPresented: $navigate) {
-           RootView()
-        }
+        .navigationBarBackButtonHidden(true)
     }
 }
 

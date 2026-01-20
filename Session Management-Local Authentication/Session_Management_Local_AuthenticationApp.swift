@@ -11,7 +11,7 @@ import SwiftUI
 struct Session_Management_Local_AuthenticationApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
