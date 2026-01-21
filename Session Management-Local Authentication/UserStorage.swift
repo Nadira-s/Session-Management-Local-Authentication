@@ -26,4 +26,5 @@ enum UserStorage{
     static func deleteUser() {
         UserDefaults.standard.removeObject(forKey: userKey)
     }
+    
 }
