@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LoginScreen: View {
     @Binding var path: NavigationPath
-    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @EnvironmentObject var session: SessionManager
     @State private var email: String? = nil
     @State private var password: String? = nil
     @State private var showAlert = false
@@ -51,26 +51,25 @@ struct LoginScreen: View {
             
             PrimaryButton(title: Strings.Login.title) {
 
-               
                 guard let email = email, isValidEmail(email),
-                      let password = password, password.count >= 6 else {
-                    alertMessage = Strings.Validation.validationFailed
-                    showAlert = true
-                    return
-                }
+                         let password = password, password.count >= 6 else {
+                       alertMessage = Strings.Validation.validationFailed
+                       showAlert = true
+                       return
+                   }
 
-                guard let savedUser = UserStorage.getUser() else {
-                    alertMessage = "User does not exist"
-                    showAlert = true
-                    return
-                }
+                   let result = session.login(email: email, password: password)
 
-                if savedUser.email == email && savedUser.password == password {
-                    isLoggedIn = true
-                } else {
-                    alertMessage = "Invalid credentials"
-                    showAlert = true
-                }
+                   switch result {
+                   case .success:
+                       break
+                   case .userNotFound:
+                       alertMessage = "User does not exist"
+                       showAlert = true
+                   case .wrongPassword:
+                       alertMessage = "Wrong password"
+                       showAlert = true
+                   }
             }
 
             HStack {

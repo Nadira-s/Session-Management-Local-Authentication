@@ -1,20 +1,23 @@
 import SwiftUI
 
 struct RootView: View {
-    @AppStorage("isLoggedIn") var isLoggedIn = false
+
+    @StateObject private var session = SessionManager()
     @State private var showSplash = true
-    
+
     var body: some View {
-        ZStack{
-            
+        ZStack {
+
             if !showSplash {
-                if isLoggedIn {
+                if session.isLoggedIn {
                     MainNavigation()
-                }else {
+                        .environmentObject(session)
+                } else {
                     AuthNavigation()
+                        .environmentObject(session)
                 }
             }
-            
+
             if showSplash {
                 SplashScreen {
                     withAnimation {

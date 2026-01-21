@@ -7,24 +7,26 @@
 
 import Foundation
 
-enum UserStorage{
-    private static let userKey = "savedUser"
+final class UserStorage {
+    static let shared = UserStorage()
+    private init() {}
     
-    static func save(user: User) {
-        if let data = try? JSONEncoder().encode(user){
+    private let userKey = "savedUser"
+    func save(user: User) {
+        if let data = try? JSONEncoder().encode(user) {
             UserDefaults.standard.set(data, forKey: userKey)
         }
     }
-    static func getUser() -> User? {
+    
+    func getUser() -> User? {
         guard let data = UserDefaults.standard.data(forKey: userKey),
-              let user = try? JSONDecoder().decode(User.self, from: data)
-        else  {
+              let user = try? JSONDecoder().decode(User.self, from: data) else {
             return nil
         }
         return user
     }
-    static func deleteUser() {
+    func deleteUser() {
         UserDefaults.standard.removeObject(forKey: userKey)
     }
-    
 }
+

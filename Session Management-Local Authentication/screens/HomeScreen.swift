@@ -9,14 +9,14 @@ import SwiftUI
 
 struct HomeScreen: View {
     @Binding var path: NavigationPath
-    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @EnvironmentObject var session: SessionManager
     @State private var showDeleteAlert = false
     
     var body: some View {
         VStack(spacing:30){
             Text(Strings.homeTitle)
             PrimaryButton(title: "Logout"){
-                isLoggedIn = false
+                session.logout()
             }
             PrimaryButton(title: "Delete account"){
                 showDeleteAlert = true
@@ -26,7 +26,7 @@ struct HomeScreen: View {
                 
                 Button("Delete", role: .destructive) {
                     UserDefaultsManager.clearAll()
-                    isLoggedIn = false
+                    session.deleteAccount()
                 }
             } message: {
                 Text("This action cannot be undone")

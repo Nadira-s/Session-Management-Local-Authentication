@@ -45,7 +45,7 @@ struct Strings {
         static let nameLabel =  "Enter username"
         
     }
-    enum UserDefaultsKeys {
+    struct UserDefaultsKeys {
         static let isLoggedIn = "isLoggedIn"
     }
 }

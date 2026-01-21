@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct  SignUpScreen: View {
-    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @EnvironmentObject var session: SessionManager
     @Binding var path: NavigationPath
     @State private var name: String? = nil
     @State private var email: String? = nil
@@ -88,7 +88,6 @@ struct  SignUpScreen: View {
                     return nil
                 }
             )
-            
             PrimaryButton(title: Strings.SignUp.title) {
                 let usernameValid = {
                     if let name = name {
@@ -96,44 +95,44 @@ struct  SignUpScreen: View {
                     }
                     return false
                 }()
+
                 let emailValid = {
                     if let email = email {
                         return isValidEmail(email)
                     }
                     return false
                 }()
-                
+
                 let passwordValid = {
                     if let password = password {
                         return !password.isEmpty && password.count >= 6
                     }
                     return false
                 }()
-                
+
                 let confirmValid = {
                     if let confirm = confirmPassword, let pass = password {
                         return !confirm.isEmpty && confirm == pass
                     }
                     return false
                 }()
-                
-                guard
-                    let name = name,
-                    let email = email,
-                    let password = password
-                else { return }
-                
-                if UserStorage.getUser() != nil {
+
+                guard let name = name, let email = email, let password = password else { return }
+
+                guard usernameValid && emailValid && passwordValid && confirmValid else {
+                    alertMessage = Strings.Validation.validationFailed
+                    showAlert = true
+                    return
+                }
+
+                let success = session.signup(name: name, email: email, password: password)
+                if !success {
                     alertMessage = "User already exists"
                     showAlert = true
                     return
                 }
-                
-                let user = User(name: name, email: email, password: password)
-                UserStorage.save(user: user)
-                
-                isLoggedIn = true
             }
+
             HStack {
                 Text(Strings.SignUp.text)
                     .foregroundColor(.gray)
