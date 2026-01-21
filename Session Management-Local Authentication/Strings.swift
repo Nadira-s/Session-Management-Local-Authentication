@@ -45,4 +45,9 @@ struct Strings {
         static let nameLabel =  "Enter username"
         
     }
+    struct UserDefaultsKeys {
+        static let isLoggedIn = "isLoggedIn"
+    }
 }
+
+

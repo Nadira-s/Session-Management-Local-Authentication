@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct LoginScreen: View {
-    @Binding var path: NavigationPath 
+    @Binding var path: NavigationPath
+    @EnvironmentObject var session: SessionManager
     @State private var email: String? = nil
     @State private var password: String? = nil
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         VStack(spacing: 20) {
@@ -18,7 +21,7 @@ struct LoginScreen: View {
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(.blue)
-//                .padding()
+
 
             SimpleTextField(
                 label: Strings.Login.email,
@@ -47,26 +50,28 @@ struct LoginScreen: View {
             )
             
             PrimaryButton(title: Strings.Login.title) {
-                let emailValid = {
-                    if let email = email {
-                        return isValidEmail(email)
-                    }
-                    return false
-                }()
-                
-                let passwordValid = {
-                    if let password = password {
-                        return !password.isEmpty && password.count >= 6
-                    }
-                    return false
-                }()
-                
-                if emailValid && passwordValid {
-                    path.append(AppRoute.home)
-                } else {
-                    print(Strings.Validation.validationFailed)
-                }
+
+                guard let email = email, isValidEmail(email),
+                         let password = password, password.count >= 6 else {
+                       alertMessage = Strings.Validation.validationFailed
+                       showAlert = true
+                       return
+                   }
+
+                   let result = session.login(email: email, password: password)
+
+                   switch result {
+                   case .success:
+                       break
+                   case .userNotFound:
+                       alertMessage = "User does not exist"
+                       showAlert = true
+                   case .wrongPassword:
+                       alertMessage = "Wrong password"
+                       showAlert = true
+                   }
             }
+
             HStack {
                 Text(Strings.Login.text)
                     .foregroundColor(.gray)
@@ -80,7 +85,11 @@ struct LoginScreen: View {
             }        }
         .padding()
         .navigationBarBackButtonHidden(true)
+        .alert(alertMessage, isPresented: $showAlert) {
+            Button("OK", role: .cancel) {}
+        }
     }
+    
 }
 
 func isValidEmail(_ email: String) -> Bool {

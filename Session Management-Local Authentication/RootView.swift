@@ -1,25 +1,23 @@
 import SwiftUI
 
 struct RootView: View {
-    @State private var path = NavigationPath()
+
+    @StateObject private var session = SessionManager()
     @State private var showSplash = true
-    
+
     var body: some View {
         ZStack {
-            NavigationStack(path: $path) {
-                LoginScreen(path: $path)
-                    .navigationDestination(for: AppRoute.self) { route in
-                        switch route {
-                        case .login:
-                            LoginScreen(path: $path)
-                        case .signup:
-                            SignUpScreen(path: $path)
-                        case .home:
-                            HomeScreen(path: $path)
-                        }
-                    }
+
+            if !showSplash {
+                if session.isLoggedIn {
+                    MainNavigation()
+                        .environmentObject(session)
+                } else {
+                    AuthNavigation()
+                        .environmentObject(session)
+                }
             }
-            
+
             if showSplash {
                 SplashScreen {
                     withAnimation {
