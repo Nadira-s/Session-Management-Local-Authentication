@@ -23,10 +23,10 @@ The project reuses the same UI screens and focuses on implementing authenticatio
 ## 🖼 Screenshots
 
 <p float="left">
-  <img src="Screenshots/splash.png" width="220" />
-  <img src="Screenshots/login.png" width="220" />
-  <img src="Screenshots/signup.png" width="220" />
-  <img src="Screenshots/home.png" width="220" />
+  <img src="Screenshots/splash.png" width="200" />
+  <img src="Screenshots/login.png" width="200" />
+  <img src="Screenshots/signup.png" width="200" />
+  <img src="Screenshots/home.png" width="200" />
 </p>
 
 ---
